@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+	<meta charset="UTF-8">
+	<title>Survey</title>
+	<link rel="stylesheet" type="text/css" href="stylesheets/styles.css"></link>
+
+
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro" rel="stylesheet">
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>
+
+	<script type="text/javascript" src="js/controllers.js" ></script>
+
+</head>
+
+<body ng-app="angularApp" ng-controller="study2Controller" ng-keyup="switchViews($event.keyCode)">
+	<!--<input type="button" ng-click="resetSurvey()" value="reset!!" />-->
+	<div class="survey" ng-show= showSurvey>
+		<h4>Post {{seenPosts.length}}/{{totalPosts}}</h4>
+		<br>
+	<table style="background-color: #FEDCD2">
+		  <colgroup>
+		    <col style="width: 50%" />
+		    <col style="width: 50%" />
+		  </colgroup>
+			<!-- ROW 1: Titles -->
+			<thead>
+				<tr>
+					<th><h1>Original Image</h1></th>
+					<th><h1>Edited Image </h1>
+					<h4>Use arrow keys to switch between original and edited image</h4>
+					</th>
+				</tr>
+			</thead>
+
+			<tbody>
+			<!-- ROW 2: Images -->
+				<tr>
+					<td>
+						<div ng-repeat="image in sourceImages">
+							<img class="slide" ng-src={{image.image}} ng-show="$index==currentSourceIndex">
+						</div>
+					</td>
+					<td>
+						<div class="slide" ng-show="compareViewSource">
+							<div ng-repeat="image in sourceImages">
+								<img class="slide" ng-src={{image.image}} ng-show="$index==currentSourceIndex">
+							</div>
+						</div>
+						<div class="responseImage" ng-show="!compareViewSource">
+							<img class="slide" ng-src={{responseImage.image}}>
+						</div>
+					</td>
+				</tr>
+			<!-- Row 3: Source Image Preview-->
+				<tr style="vertical-align: middle">
+					<td>
+						<div class = "sourceImagesContainer">
+							<div ng-repeat="image in sourceImages" ng-show="sourceImages.length>1" style="display: inline-block; margin-left:3px; margin-right:3px" ng-click="showSource($index)">
+								<img ng-src={{image.image}} style="max-width:100px">
+							</div>
+						</div>
+						<h4 ng-show="sourceImages.length>1">Click the additional images to examine more closely</h4>
+					</td>
+					<td>
+						<h2 ng-show="compareViewSource">Viewing: Original Image</h2>
+						<h2 ng-show="!compareViewSource">Viewing: Edited Image</h2>
+						<br>
+						<button class="btn" ng-click="saveStudy3Response(0)">Irrelevant Image</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<br>
+		<br>
+		<h2>Give instructions to go from the original image to the edited image.   For example: "Make the background black and white", or "Add the guy from the first photo into the beach from the second photo."</h2> 
+		<h2>Do not give descriptions.  For example, write "Turn the shirt green" instead of "The shirt became green."</h2>
+		<h2>Do not include instructions involving watermarks, such as "Add the word 'PREVIEW' to the image." </h2>
+		<h2>If there is no change, click the "Irrelevant Image" button.</h2>
+		<textarea class = "inputBox" ng-model="description"></textarea> 
+		<input type="button" class="submitBtn" ng-click="saveStudy3Response(1)" value="Submit" style="float:right;"/>
+		<br>
+		<br>
+		<br>
+
+	</div>
+	<div class="end" ng-show=showThankYou>
+		<h1>Thank you</h1>
+		<h2> Thank you for completing the survey!
+		Your validation code is: {{userID}}.</h2>
+	</div>
+
+</body>
+</html>
+

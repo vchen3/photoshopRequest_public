@@ -1,0 +1,52 @@
+<!-- -->
+
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+
+	<meta charset="UTF-8">
+	<title>Background</title>
+	<base href="/" />
+	<link rel="stylesheet" type="text/css" href="stylesheets/styles.css"></link>
+
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro" rel="stylesheet">
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular-route.js"></script>
+
+	<script src="js/controllers.js" type="text/javascript" ></script>
+	
+</head>
+
+
+<body>
+	<div class="background" ng-controller="study2Controller">
+		<h1>Background</h1>
+
+		<p>In this survey, you will rate ten posts from www.reddit.com/r/PhotoshopRequest, a website where users submit Photoshop jobs.  You will receive an original image, a request for how it should be edited, and multiple response images that have been edited accordingly.</p>
+		<p>If you encounter a post with multiple source images, the "Original Image and Request" panel will show all images.  Please compare the response image with the source image that matches it best.  Some of the response images may look very similar.</p>
+		<p>Please complete the tasks described below for each of the following posts.</p>
+
+		<img id="study2Example" src="public/images/NumberedExample.png">
+
+		<h2>1) Note invalid requests</h2>
+			<p> Imagine that you are an artist trying to edit the picture according to the request. A request is valid if you know exactly what edits to make based on the request and the photo. Invalid requests are non-specific instructions such as unclear requests or creative generation tasks.  If you think the request is invalid, please click the "Invalid Request" button.</p>
+			<h3>Example valid requests: "Remove the people in the background", "Brighten the color of the leaves."</h3>
+			<h3>Example invalid requests: "Put me somewhere awesome", "Please make me a logo for my project."</h3>
+
+		<h2>2) Note irrelevant responses</h2>
+			<p> A response image is "irrelevant" if the image link is broken, or if it is a "troll" image: edited images that, while humorous and technically well-edited, are not what you think the user intended to receive.  If you think the image is irrelevant, please click the "Irrelevant Response" button.</p>
+
+
+		<h2>3) Rate image response</h2>
+			<p> If image response is relevant, please give it a rating score.  If this was your photo, how satisfied would you be with this edit on a scale from 1-5?   Ratings should be independent of previous responses or requests.</p>
+		<br>
+
+		<input type="button" class="submitBtn" onclick="location.href='/survey'" value="Begin" />
+	</div>
+
+</body>
+</html>
+
+	

@@ -1,0 +1,169 @@
+.background{
+	width: 85%;
+	display: block;
+	margin-left: auto;
+  	margin-right: auto;
+  	font-size: 12px;
+  	font-family: 'Open Sans', sans-serif;
+  	padding-top: 3%;
+}
+.background h1{
+	font-size: 2.5em;
+}
+.background h2{
+	font-size: 1.6em;
+}
+
+.background h3{
+	font-size: 1.4em;
+	text-align: center;
+}
+
+.background h4{
+	font-size: 1.5em;
+}
+.background p, ol{
+	font-size: 1.4em;
+}
+
+.background video{
+	height: 40%;
+	width: 80%;
+	display: block;
+	margin-left: auto;
+  	margin-right: auto;
+  	border: .5px solid black;
+}
+
+#study2Example{
+	width: 70%;
+	display: block;
+	margin-left: auto;
+  	margin-right: auto;
+}
+
+.submitBtn{
+	background-color: #4CAF50; /* Green */
+	border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
+.btn{
+  text-decoration: none;
+  background-color: #EEEEEE;
+  color: #333333;
+  padding: 5px 11px;
+  font-size: 13px;
+}
+
+.dropdown{
+	height: 22px;
+	font-size: 14px;
+}
+
+.instructions{
+	width: 85%;
+	display: block;
+	margin-left: auto;
+  	margin-right: auto;
+  	font-size: 11px;
+  	font-family: 'Open Sans', sans-serif;
+  	padding-top: 3%;
+}
+
+.instructions h1{
+	font-size: 1.55em;
+}
+
+.instructions h2{
+	font-size: 1.5em;
+}
+.instructions p, ol{
+	font-size: 1.4em;
+}
+
+.instructionsTab{
+	text-align: center;
+	margin-left: auto;
+  	margin-right: auto;
+  	font-size: 15px;
+  	border-bottom:1px solid black; 
+  	border-top:1px solid black; 
+  	width: 20%;
+  	background-color: paleturquoise;
+  	font-family: 'Open Sans', sans-serif;
+}
+
+
+.survey{
+	height: 100%;
+	width: 100%;
+	display: block;
+	margin-left: auto;
+  	margin-right: auto;
+  	font-size: 10px;
+  	width: 90%;
+  	font-family: 'Open Sans', sans-serif;
+  	font-weight: 200;
+}
+
+/* Post title and text */
+.survey h1{
+	font-size: 1.75em;
+}
+.survey h2{
+	font-size: 1.6em;
+	font-weight:lighter;
+}
+
+.survey h3{
+	font-size: 1.5em;
+	font-weight:lighter;
+}
+.survey h4{
+	font-size: 1.3em;
+}
+.survey p{
+	font-size: 1em;
+}
+table{
+	text-align: center;
+	margin-left: auto;
+  	margin-right: auto;
+  	height:100%;
+  	width: 100%;
+}
+table th+th, td + td { border-left:1px solid black;}
+
+th,td{vertical-align: top;overflow-wrap:break-word;padding-top: 3%}
+
+
+.slide{
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 375px;
+  max-height:400px;
+}
+
+.end{
+	width: 85%;
+	display: block;
+	margin-left: auto;
+  	margin-right: auto;
+  	font-size: 12px;
+  	font-family: 'Open Sans', sans-serif;
+  	font-weight: 200;
+}
+.end h1{
+	font-size: 1.75em;
+}
+/* Survey questions */
+.end h2{
+	font-size: 1.25em;
+}
+

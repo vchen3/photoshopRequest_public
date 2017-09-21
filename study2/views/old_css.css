@@ -1,0 +1,85 @@
+.background{
+	width: 85%;
+	display: block;
+	margin-left: auto;
+  	margin-right: auto;
+  	font-size: 11px;
+  	font-family: 'Open Sans', sans-serif;
+}
+.background h1{
+	font-size: 2.5em;
+}
+.background h2{
+	font-size: 1.75em;
+}
+.background p, ol{
+	font-size: 1.4em;
+	font-style: none;
+}
+
+#redditExampleAll{
+	width: 100%;
+}
+
+.survey{
+	height: 100%;
+	width: 100%;
+	display: block;
+	margin-left: auto;
+  	margin-right: auto;
+  	font-size: 12px;
+}
+
+/* Post title and text */
+.survey h1{
+	font-size: 1.75em;
+	font-family: 'Source Sans Pro', sans-serif;
+}
+/* Survey questions */
+.survey h2{
+	font-size: 1.6em;
+	font-weight:lighter;
+	font-family: 'Open Sans', sans-serif;
+}
+/* Survey sub-questions */
+.survey h3{
+	font-size: 1.5em;
+	font-weight:lighter;
+	font-family: 'Open Sans', sans-serif;
+}
+/* User responses */
+.survey h4{
+	font-size: 1.3em;
+	font-family: 'Open Sans', sans-serif;
+}
+
+.mySlide{
+	display: none;
+	max-width:300px; 
+	max-height:420px;
+}
+
+table{
+	border-top:1px solid black; 
+	text-align: center;
+}
+td{
+	width: 33%;
+}
+
+.end{
+	width: 85%;
+	display: block;
+	margin-left: auto;
+  	margin-right: auto;
+  	font-size: 12px;
+}
+.end h1{
+	font-size: 1.75em;
+	font-family: 'Open Sans', sans-serif;
+}
+/* Survey questions */
+.end h2{
+	font-size: 1.25em;
+	font-family: 'Open Sans', sans-serif;
+}

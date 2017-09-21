@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+	<meta charset="UTF-8">
+	<title>Survey</title>
+	<link rel="stylesheet" type="text/css" href="stylesheets/styles.css"></link>
+
+
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro" rel="stylesheet">
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>
+
+	<script type="text/javascript" src="js/controllers.js" ></script>
+
+</head>
+
+<body ng-app="angularApp" ng-controller="study2Controller" ng-keyup="switchViews($event.keyCode)">
+	<!--<input type="button" ng-click="resetSurvey()" value="reset!!" />-->
+	<div class="survey" ng-show= showSurvey>
+		<h4>Post {{seenPosts.length}}/{{totalPosts}}</h4>
+		<div class = "instructionsTab" ng-click="hideInstructions()">Click to review instructions</div>
+		<div class="instructions" ng-show=showInstructions ng-click="hideInstructions()">
+			<h1>Task Instructions</h1>
+
+			<h2>1) Note invalid requests</h2>
+			<h4> Imagine that you are an artist trying to edit this picture according to the request.  A request is valid if you know exactly what edits to make based on the request and the photo (e.g. "Remove the people in the background").  Invalid requests are non-specific instructions such as unclear requests (e.g. “Put me somewhere awesome”) or creative generation tasks (e.g. “Please make me a logo for my project").  If you think the request is invalid, please click the "Invalid Request" button.</h4>
+
+
+			<h2>2) Note irrelevant responses</h2>
+			<h4> You will now individually analyze all responses to the original request and photo.  Please mark if a response is irrelevant: that is, an image that seem unrelated to the original image and request.  These include broken links to images (e.g. an image that says "The image you are requesting does not exist or is no longer available.") and "troll" images: edited images that, while humorous and technically well-edited, are not what you think the user intended to receive.  If you think the response image is irrelevant, please click the "Irrelevant Response" button.</h4>
+
+			<h2>3) Rate image response</h2>
+			<h4> If image response is legitimate, please give it a rating score.  If this was your photo, how satisfied would you be with this edit on a scale from 1-5?  Ratings do not need to be dependent on a previous response or request.</h4>
+			
+		</div>
+		<br>
+
+	<table>
+		  <colgroup>
+		    <col style="width: 33%" />
+		    <col style="width: 33%" />
+		    <col style="width: 33%" />
+		  </colgroup>
+			<!-- ROW 1: Titles -->
+			<thead>
+				<tr>
+					<th><h1>Original Image and Request</h1></th>
+					<th><h1>Response Image </h1></th>
+					<th><h1>Comparison Panel</h1>
+						<h4>Click or use arrow keys to switch between original and response image</h4></th>
+				</tr>
+			</thead>
+
+			<tbody>
+			<!-- ROW 2: Images -->
+				<tr>
+					<td>
+						<div ng-repeat="image in sourceImages">
+							<img class="slide" ng-src={{image.image}} ng-show="$index==currentSourceIndex">
+						</div>
+					</td>
+					<td>
+						<div ng-repeat="image in responseImages">
+							<img class="slide" ng-src={{image.image}} ng-show="$index==currentResponseIndex">
+						</div>
+					</td>
+					<td ng-click="switchViews('a')">
+						<div class="sourceImage" ng-show="compareViewSource">
+							<div ng-repeat="image in sourceImages">
+								<img class="slide" ng-src={{image.image}} ng-show="$index==currentSourceIndex">
+							</div>
+						</div>
+						<div class="responseImage" ng-show="!compareViewSource">
+							<div ng-repeat="image in responseImages">
+								<img class="slide" ng-src={{image.image}} ng-show="$index==currentResponseIndex">
+							</div>
+						</div>
+					</td>
+				</tr>
+			<!-- Row 3: Source Image Preview-->
+				<tr style="vertical-align: middle">
+					<td>
+						<div class = "sourceImagesContainer">
+							<div ng-repeat="image in sourceImages" ng-show="sourceImages.length>1" style="display: inline-block; margin-left:3px; margin-right:3px" ng-click="showSource($index)">
+								<img ng-src={{image.image}} style="max-width:30px">
+							</div>
+						</div>
+						<p ng-show="sourceImages.length>1">Click the additional images to examine more closely</p>
+					</td>
+					<td>
+					<td>
+				</tr>
+			<!-- ROW 4: Request, Image Label, Image Rating -->
+				<tr style="vertical-align: top;">
+					<td>
+						<h2 id = "postTitle">{{currentPost.title}}</h2>
+						<h2 id = "postContent">{{currentPost.content}}</h2>
+						<button ng-click="invalidPost()">Invalid Request</button>
+					</td>
+					<td>
+						<h2>Response Image {{currentResponseIndex +1}}/{{responseImages.length}}</h2>
+						
+						<button ng-click="saveRating(0)">Irrelevant Response</button>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+						<select ng-model="currentRating">
+							<option value=0>Give rating</option>
+							<option value=1>1) Not at all satisfied</option>
+							<option value=2>2) Slightly satisfied</option>
+							<option value=3>3) Somewhat satisfied</option>
+							<option value=4>4) Very satisfied</option>
+							<option value=5>5) Extremely satisfied</option>
+						</select>
+						<br>
+						<input type="button" class="submitBtn" ng-click="saveRating()" value="Submit" />
+					</td>
+					<td>
+						<h2 ng-show="compareViewSource">Viewing: Original Image</h2>
+						<h2 ng-show="!compareViewSource">Viewing: Response Image</h2>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<br>
+		<br>
+		<br>
+
+	</div>
+	<div class="end" ng-show=showThankYou>
+		<h1>Thank you</h1>
+		<h2> Thank you for completing the survey!
+		Your validation code is {{userID}}.</h2>
+	</div>
+
+</body>
+</html>
+

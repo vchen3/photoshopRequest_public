@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+	<meta charset="UTF-8">
+	<title>Survey</title>
+	<link rel="stylesheet" type="text/css" href="stylesheets/styles.css"></link>
+
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro:600" rel="stylesheet">
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>
+
+	<script type="text/javascript" src="js/controllers.js" ></script>
+</head>
+
+<body ng-app="angularApp" ng-controller="study1Controller">
+	<!--<input type="button" ng-click="resetSurvey()" value="reset!!">-->
+
+	<div class="survey" ng-show= !surveyFinished>
+			<br>
+			<br>
+			<h4>Request {{seenPosts.length}}/{{totalPosts}}</h4>
+			<div class = "original">
+				<div class = "originalText">
+					<h1 id = "postTitle">{{currentPost.title}}</h1>
+					<h1 id = "postContent">{{currentPost.content}}</h1>
+				</div>
+				
+				<div class = "originalImages">
+					<div ng-repeat="image in sourceImages">
+						<img class="slide" ng-src={{image.image}} ng-show="$index==currentSlide.value" style="max-width:300px; max-height:420px;">
+					</div>
+					<div class = "sourceImagesContainer">
+						<div ng-repeat="image in sourceImages" ng-show="sourceImages.length>1" style="display: inline-block; margin-left:3px; margin-right:3px" ng-click="showDiv($index)">
+							<img class="slide" ng-src={{image.image}} style="max-width:100px">
+						</div>
+					</div>
+	  				<p ng-show="sourceImages.length>1">Click the additional images to examine more closely</p>
+				</div>
+			</div>
+
+			<div class="validRequest" ng-show= "showValidRequest">
+				<h2>1) Is this a valid request?</h2>
+				<h3>Imagine that you are an artist trying to edit this picture according to the request.  A request is valid if you know exactly what edits to make based on the request and the photo (e.g. "Please remove the people in the background" or "Please touch up this photo").  Invalid requests are non-specific instructions such as unclear requests (e.g. “Put me somewhere awesome”) or creative generation tasks (e.g. “Please make me a logo for my project").  </h3>
+				<input type="button" class="submitBtn" ng-click="isValidReq(0)" value="No, this is invalid" />
+				<input type="button" class="submitBtn" ng-click="isValidReq(1)" value="Yes, this is valid" />
+			</div>
+			
+			<div class="selectRequest" ng-show="showSelectRequest">
+				<h2>2) Select the Request: Copy and paste the portion of the text that contains the request into the textbox below.  Ignore any unnecessary background information.  </h3>
+					<input type="button" class="backBtn" ng-click="backShowValidReq()" value="Back" />
+					
+					<textarea class = "inputBox" ng-model="selectedReq"></textarea>
+			</div>
+			
+			<div class="editRequest" ng-show="showEditRequest">
+				<h2>3) Edit the Request: Write a clarified and corrected version of Step 2's request in the textbox below.  For example, clarify a request such as "Touch this photo up" to "Increase the contrast and remove damage."  Corrections may include rephrasing, fixing spelling or grammatical errors, merging short sentences together, etc.  If you feel that the selected request is already clear and grammatically correct, you may submit the same response from 2).</h2>
+				<textarea class = "inputBox" ng-model="editedReq"></textarea> 
+				<input type="button" class="submitBtn" ng-click="saveResponse(1)" value="Submit" />
+				
+			</div>
+
+	</div>
+	<div class="end" ng-show=surveyFinished>
+		<h1>Thank you</h1>
+		<h2> Thank you for completing the survey!
+		Your validation code is <strong>{{userID}}</strong>.</h2>
+	</div>
+
+</body>
+</html>
+
+	

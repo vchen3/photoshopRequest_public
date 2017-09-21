@@ -1,0 +1,52 @@
+<!-- -->
+
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+
+	<meta charset="UTF-8">
+	<title>Background</title>
+	<base href="/" />
+	<link rel="stylesheet" type="text/css" href="stylesheets/styles.css"></link>
+
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro" rel="stylesheet">
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular-route.js"></script>
+
+	<script src="js/controllers.js" type="text/javascript" ></script>
+	
+</head>
+
+
+<body>
+	<div class="background" ng-controller="study2Controller">
+		<h1>Instructions</h1>
+
+			<h2>In this survey, you will view ten pairs of images.   Imagine that you have the original image but want to transform it into the edited image.  For each pair, please type 1-2 sentences of  instructions that you would give someone to make these edits.  There is no wrong answer.  Use the arrow keys to flip between the original and edited image to clearly view the changes.  See example below.</h2>
+			<h3>"Replace the background with shadowy figures", or "Make me look like a businessman."</h3>
+			<img class="redditExampleAll" src="public/images/general.png">
+			
+			<h2>If you encounter a post with multiple original images, icons of each original image will be displayed.  Please compare the edited image with the original image that matches it best, or if appropriate describe the edit by referencing multiple photos.  See example below.</h2>
+			<h3>"Please add the guy on the far left of the first image into the second family photograph."</h3>
+			<img class="redditExampleAll" src="public/images/multiple.png">
+
+			<h2>If you see no relationship between the original and edited image such as in the following example, please click the "Irrelevant Image" button.</h2>
+			<img class="redditExampleAll" src="public/images/irrelevant.png">
+			
+
+		<br>
+		<br>
+		<br>
+		<br>
+		<input type="button" style="float:right" class="submitBtn" onclick="location.href='/survey'" value="Begin" />
+		<br>
+		<br>
+		
+	</div>
+
+</body>
+</html>
+
+	

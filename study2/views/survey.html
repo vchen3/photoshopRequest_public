@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+	<meta charset="UTF-8">
+	<title>Survey</title>
+	<link rel="stylesheet" type="text/css" href="stylesheets/styles.css"></link>
+
+
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro" rel="stylesheet">
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>
+
+	<script type="text/javascript" src="js/controllers.js" ></script>
+
+</head>
+
+<body ng-app="angularApp" ng-controller="study2Controller" ng-keyup="switchViews($event.keyCode)">
+	<!--<input type="button" ng-click="resetSurvey()" value="reset!!" />-->
+	
+	<div class = "instructionsTab" ng-click="hideInstructions()" ng-show= showSurvey>Click to review instructions</div>
+	<div class="instructions" ng-show=showInstructions ng-click="hideInstructions()">
+			<h1>Task Instructions</h1>
+			<h2>1) Note invalid requests</h2>
+			<p> A request is invalid if the instructions are unclear (e.g. “Put me somewhere awesome”) or creative generation tasks (e.g. “Please make me a logo for my project").  If you think the request is invalid, please click the "Invalid Request" button.</p>
+
+			<h2>2) Note irrelevant responses</h2>
+			<p> A response image is "irrelevant" if the image link is broken or is a "troll" image.  If you think the image is irrelevant, please click the "Irrelevant Response" button.</p>
+
+			<h2>3) Rate image response</h2>
+			<p> If image response is relevant, please give it a rating score.  If this was your photo, how satisfied would you be with this edit on a scale from 1-5?   Ratings should be independent of previous responses or requests.</p>
+			<p>If you encounter a post with multiple source images, the "Original Image and Request" panel will show each image.  Please compare the response image with the source image that matches it best.  Some of the response images may look very similar.</p>
+		</div>
+
+	<div class="survey" ng-show= showSurvey>
+		<h4>Post {{seenPosts.length}}/{{totalPosts}}</h4>
+	<table>
+		  <colgroup>
+		    <col style="width: 50%" />
+		    <col style="width: 50%" />
+		  </colgroup>
+			<!-- ROW 1: Titles -->
+			<thead>
+				<tr>
+					<th><h1>Original Image and Request</h1></th>
+					<th><h1>Response Image </h1>
+					<h4>Use arrow keys to switch between original and response image</h4>
+					</th>
+				</tr>
+			</thead>
+
+			<tbody>
+			<!-- ROW 2: Images -->
+				<tr>
+					<td>
+						<div ng-repeat="image in sourceImages">
+							<img class="slide" ng-src={{image.image}} ng-show="$index==currentSourceIndex">
+						</div>
+					</td>
+					<td>
+						<div class="slide" ng-show="compareViewSource">
+							<div ng-repeat="image in sourceImages">
+								<img class="slide" ng-src={{image.image}} ng-show="$index==currentSourceIndex">
+							</div>
+						</div>
+						<div class="responseImage" ng-show="!compareViewSource">
+							<div ng-repeat="image in responseImages">
+								<img class="slide" ng-src={{image.image}} ng-show="$index==currentResponseIndex">
+							</div>
+						</div>
+					</td>
+				</tr>
+			<!-- Row 3: Source Image Preview-->
+				<tr style="vertical-align: middle">
+					<td>
+						<div class = "sourceImagesContainer">
+							<div ng-repeat="image in sourceImages" ng-show="sourceImages.length>1" style="display: inline-block; margin-left:3px; margin-right:3px" ng-click="showSource($index)">
+								<img ng-src={{image.image}} style="max-width:90px">
+							</div>
+						</div>
+						<p ng-show="sourceImages.length>1">Click the additional images to examine more closely</p>
+					</td>
+				</tr>
+			<!-- ROW 4: Request, Image Label, Image Rating -->
+				<tr style="vertical-align: top;">
+					<td>
+						<h2 id = "postTitle">{{currentPost.title}}</h2>
+						<h2 id = "postContent">{{currentPost.content}}</h2>
+					</td>
+					<td>
+						<h2>Response Image {{currentResponseIndex +1}}/{{responseImages.length}}</h2>
+						<h2 ng-show="compareViewSource">Viewing: Original Image</h2>
+						<h2 ng-show="!compareViewSource">Viewing: Response Image</h2>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<button class="btn" ng-click="invalidPost()">Click if Invalid Request</button>
+					</td>
+					<td>
+						<button class="btn" ng-click="saveRating(0)">Click if Irrelevant Response</button>
+					</td>
+				</tr>
+				<tr>
+					<td>
+					</td>
+					<td>
+						<br>
+						<select class="dropdown" ng-model="currentRating">
+							<option value=none>Give rating</option>
+							<option value=1>1) Not at all satisfied</option>
+							<option value=2>2) Slightly satisfied</option>
+							<option value=3>3) Somewhat satisfied</option>
+							<option value=4>4) Very satisfied</option>
+							<option value=5>5) Extremely satisfied</option>
+						</select>
+						<br>
+						<br>
+						<br>
+						<input type="button" class="submitBtn" ng-click="saveRating(currentRating)" value="Submit" />
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<br>
+		<br>
+		<br>
+
+	</div>
+	<div class="end" ng-show=showThankYou>
+		<h1>Thank you</h1>
+		<h2> Thank you for completing the survey!
+		Your validation code is: {{userID}}.</h2>
+	</div>
+
+</body>
+</html>
+

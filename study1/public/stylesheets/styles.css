@@ -1,0 +1,145 @@
+.background{
+	width: 85%;
+	display: block;
+	margin-left: auto;
+  	margin-right: auto;
+  	font-size: 12px;
+  	font-family: 'Open Sans', sans-serif;
+  	padding-top: 3%;
+}
+.background h1{
+	font-size: 2.5em;
+}
+.background h2{
+	font-size: 1.75em;
+}
+.background p, ol{
+	font-size: 1.4em;
+}
+.background video{
+	height: 40%;
+	width: 80%;
+	display: block;
+	margin-left: auto;
+  	margin-right: auto;
+  	border: .5px solid black;
+}
+
+#redditExampleAll{
+	width: 70%;
+	display: block;
+	margin-left: auto;
+  	margin-right: auto;
+}
+
+.survey{
+	width: 85%;
+	display: block;
+	margin-left: auto;
+  	margin-right: auto;
+  	font-size: 12px;
+}
+/* Post title and text */
+.survey h1{
+	font-size: 1.75em;
+	font-family: 'Source Sans Pro', sans-serif;
+}
+/* Survey questions */
+.survey h2{
+	font-size: 1.6em;
+	font-weight:lighter;
+	font-family: 'Open Sans', sans-serif;
+}
+
+/* Survey sub-questions */
+.survey h3{
+	font-size: 1.5em;
+	font-weight:lighter;
+	font-family: 'Open Sans', sans-serif;
+}
+
+/* User responses */
+.survey h4{
+	font-size: 1.5em;
+	font-family: 'Source Sans Pro', sans-serif;
+}
+
+/* Make "see all photos" caption italicized*/
+.survey p{
+	font-style: italic;
+	font-size: 1.2em;
+}
+
+.end h1{
+	font-size: 1.75em;
+	font-family: 'Source Sans Pro', sans-serif;
+}
+
+.mySlide{
+	display: none;
+	max-width:300px; 
+	max-height:420px;
+}
+
+#editText {
+	border:1px solid black; 
+	min-height:50px; 
+	height:100%
+	font-size: 1.2em;
+	font-family: 'Source Sans Pro', sans-serif;
+}
+
+.original{
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	vertical-align: middle;
+	text-align: center;
+	width: 80%;
+}
+
+.sourceImagesContainer{
+	display: block;
+	margin-left: auto;
+	margin-right: auto;	
+	vertical-align: middle;
+}
+
+.inputBox{
+	border:1px solid black; 
+	min-height:50px; 
+	width: 100%; 
+	height:100%;
+	font-size: 1.5em;
+	font-family: 'Source Sans Pro', sans-serif;
+}
+
+.submitBtn{
+	width: 9em; 
+	height: 2.25em; 
+	font-size: 1.2em;
+}
+
+.clearBtn, .backBtn{
+	width: 4em; 
+	height: 2.25em; 
+	font-size: 1.2em;
+}
+
+
+.end{
+	width: 85%;
+	display: block;
+	margin-left: auto;
+  	margin-right: auto;
+  	font-size: 12px;
+}
+.end h1{
+	font-size: 1.75em;
+	font-family: 'Open Sans', sans-serif;
+}
+/* Survey questions */
+.end h2{
+	font-size: 1.25em;
+	font-family: 'Open Sans', sans-serif;
+}
