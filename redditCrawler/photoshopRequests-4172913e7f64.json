@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "photoshoprequests601",
+  "private_key_id": "4172913e7f646b4d046dcfb62af13f53623e4f41",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCNJT21wXcg2rtW\nvsysDxM6+H4KcY/tIWTDq/ioPoTcQa6q8n/nv/TxZ2tRCAQO5IDH9D0bcIRrbIE0\nAdB9XVDWWBFXFuaDZYbIix1CAZ4fIKIdJeuUnwXUK2lChGd02riyLe83/dY0X02F\n0uvX6OgaPQA1i+rWMDvoA2GoXoYDDv0AfK0nnzgH6SSwGTf+Ce5Pg+N/jkN4hJJi\nWt8sn9luwKNl+o/Sm+92tCcfnzPUOqTmodotnYpT1Y5X51HG1eM9BCH83CRmO4vg\n0H9eOqnVqGefEjRKeLUiMylfHQMcDz7Tx5RUl+RA5P+2deAnx01u0jZSLxAChEJS\nYPk29utnAgMBAAECggEAQiOvVRpBLn4Qx0dFNWMjCcEjntU0MlQxmZdeP8h8DZIh\nvS1BTmGe7/gcS65L6Iae6hPDBrak9omzyaEIB5bQqIBAL+UlQ3ExxYuavDFx3Pg3\nvxzj1ZLm8lMdUfQlXpaXcbcgn8YsuAHom8sIhPY4vQLUtELKWm/jwobDHlicx5Vu\nNgtvMCacuvClJgG9OyJcDGRGY/nhZof840a6lOZO5clxn7i4jenlFlPkTdTN70rv\nyYvaGSqc77qSAEkwGG4cNBvkBc4hWwBqxePbJkR1kxSvCPzcgNOqwSBj6vp/cRBp\n1LRqrrm0nNYi/IfFDleGhEeNP9EyoMkiFD+A2q6vgQKBgQDDToCBaERe0074cE4s\nCeNGQMWBTqBL2UKTqSqjpuNHEYZOZah8fOCL9bHviH4GJn4W1vLI0uo8Sm6YdmD7\n1UBvnHZVrCUmwtFZvgTWOZlgoRKj3z1yd0l36FgkqIfQFNIqjwgJ7uf1bZmz5KbP\nBrA0YBBc2SIUFIGzjKwpHA9V4QKBgQC5AfsPbNAhGWpOeLiQTmI/1YW5quI3+RNR\naAxsCpKLBxSO1/zphBfkz5N50HBjtkx54k4wcHOZkzwINo8m7nsnjPJc8r/mkkce\noIO6h/LuNoRO2OxnA7+5F9F5KAhu70x1xji8NDODvGnsnckeUOJfodrC9ED2xzdN\nDlmfwSVaRwKBgBKFdExRXgJ8GYYX6GHmwiXcaJ59nVf0D4s/RKrmXbFUqR7wJw0/\nLnA3aZtkn0boCZcS5U1EKzBygpB00XewXn73IIW5YICPgxj2mzDRn4j5XXIq7oHX\nbCEx6IH5dX+3KcMdc0612Et/DE9yBJunb7hXz9VuRfwPgclMMttnLNEhAoGACTbQ\nCjShKQTbBo18o7NDsWow/s5D9gWxsJw+AiOEqOfxXivjrL2ncv3jmm2HK3Ao3ukm\ne8Md/sgWdVJCTu4RtCaQ65ArfpBKenwEE4Yx0ytj64liPL8zDUTiaeZUhTHl3PfC\nW50985GutNom6hudKqYk/xCrK59AYdYVIJ+9/IECgYA7Ba0/ipox4cWVS9xIo0fh\nOHhT9EGlHMooJ1b5nELK+HFbOgs7KmqIXk3xLFuSRWq20PqFTrYP8TvKWl8rZ1Ta\nNMIs1ygs15tXsw4a8g3UbPWqWEQGtHy3soADhIP5tzwDQ/TvYvNiXnTlzEh5RoCF\nABfyFose56MW0YuZGEdHhw==\n-----END PRIVATE KEY-----\n",
+  "client_email": "admin601@photoshoprequests601.iam.gserviceaccount.com",
+  "client_id": "102546843428552897788",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://accounts.google.com/o/oauth2/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/admin601%40photoshoprequests601.iam.gserviceaccount.com"
+}

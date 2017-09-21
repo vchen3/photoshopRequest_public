@@ -1,0 +1,572 @@
+from __future__ import print_function
+import pprint
+import io
+import os
+import re
+
+import urllib.request
+import urllib.response
+import html
+import json
+import time
+from time import gmtime, strftime
+import requests
+from requests.auth import HTTPBasicAuth
+import shutil
+
+from apiclient import http
+from apiclient.http import MediaIoBaseDownload
+from apiclient import discovery
+from oauth2client import client
+from oauth2client import tools
+from oauth2client.file import Storage
+
+from PIL import Image
+import praw
+import httplib2
+import dropbox
+
+# CONNECT TO GOOGLE DRIVE API
+SCOPES = 'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/drive.file'
+CLIENT_SECRET_FILE = 'client_secret.json'
+APPLICATION_NAME = 'photoshopRequest'
+
+def get_credentials():
+    """Gets valid user credentials from storage.
+    If nothing has been stored, or if the stored credentials are invalid,
+    the OAuth2 flow is completed to obtain the new credentials.
+    Returns:
+        Credentials, the obtained credential.
+    """
+    home_dir = os.path.expanduser('~')
+    credential_dir = os.path.join(home_dir, '.credentials')
+    if not os.path.exists(credential_dir):
+        os.makedirs(credential_dir)
+    credential_path = os.path.join(credential_dir,
+                                   'drive-python-quickstart.json')
+
+    store = Storage(credential_path)
+    credentials = store.get()
+    if not credentials or credentials.invalid:
+        flow = client.flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
+        flow.user_agent = APPLICATION_NAME
+        if flags:
+            credentials = tools.run_flow(flow, store)
+        else: # Needed only for compatibility with Python 2.6
+            credentials = tools.run(flow, store)
+        print('Storing credentials to ' + credential_path)
+    return credentials
+
+
+# PRAW API
+USER_AGENT = "/desktop:RedditCrawler:by/u/vchen601"
+DB_DIR = "/Users/vchen/Desktop/photoshopRequestsDB"
+REDDIT = praw.Reddit(client_id='fJxY8nGnQLgVqA',
+                     client_secret='yayYb3_ZyjH3kB2XU2rqc3m5Hnc',
+                     user_agent=USER_AGENT)
+
+
+''' Record image url & error type in 'hairycases.txt' '''
+def record_error(link_url, error):
+    error_file = "/Users/vchen/Desktop/photoshop-request/redditCrawler/hairycases.txt"
+    currentTime = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+    with open(error_file, "r+") as annotate_file:
+        for line in annotate_file:
+            if link_url in line:
+                return
+    
+        record = link_url + " : " + str(error) + " || " + currentTime
+        annotate_file.write(record)
+        annotate_file.write('\n')
+        annotate_file.close()
+
+''' Check if given url goes directly to a .jpg/.png/.jpeg.  Return boolean '''
+def is_img_link(url):
+    match_obj = re.search(r"\.jpg$|\.jpeg$|\.png$", url, re.I|re.M)
+    return match_obj != None
+
+''' Check if given url is imgur link.  Return boolean '''
+def is_imgur_link(url):
+    match_obj = re.match(r"https?://imgur.com/", url, re.I)
+    return match_obj != None
+
+'''Check if url is imgur album.  Return boolean'''
+def is_imgur_album(url):
+    match_obj = re.match(r"https?://imgur.com/a/", url, re.I)
+    return match_obj != None
+
+'''Check if url is imgur gallery.  Return boolean'''
+def is_imgur_gallery(url):
+    match_obj = re.match(r"https?://imgur.com/gallery/", url, re.I)
+    return match_obj != None
+
+'''Get imgur album ID'''
+def get_imgur_album_id(url):
+    album_indicator = ('/a/')
+    beg_index = url.index(album_indicator) + len(album_indicator)
+    album_id = url[beg_index:]
+    return album_id
+
+'''Get imgur gallery ID'''
+def get_imgur_gallery_id(url):
+    gallery_indicator = ('/gallery/')
+    beg_index = url.index(gallery_indicator) + len(gallery_indicator)
+    gallery_id = url[beg_index:]
+    return gallery_id
+
+'''Check if url is broken non-album non-gallery imgur link
+(ex. 'http://imgur.com/123', instead of 'http://imgur.com/123.jpg')'''
+def is_broken_imgur(url):
+    # Starts with imgur.com
+    if not is_imgur_link(url):
+        return False
+
+    # Check is an album
+    if is_imgur_album(url):
+        return False
+
+    # Check is a gallery
+    if is_imgur_gallery(url):
+        return False
+
+    # Doesn't have .jpg or .png extension
+    has_extension = is_img_link(url)
+    if has_extension:
+        return False
+
+    result = (is_imgur_link and (not is_imgur_album(url)) and (not is_imgur_gallery(url)) and (not has_extension))
+    return result
+
+'''Check if url is Drive link'''
+def is_drive(url):
+    match_obj = re.match(r"https?://drive.google.com", url, re.I)
+    return match_obj != None
+
+'''Given drive link, return drive_id and type'''
+def get_drive_id_type(url):
+    # If folder
+    if url.find('/folders/') > -1:
+        response_id_type = "folder"
+        folder_indicator = '/folders/'
+        beg_index = url.index(folder_indicator) + len(folder_indicator)
+        # ex. '...drive.google.com/drive/folders/ID/'
+        if url[beg_index:].find('/') > -1:
+            end_index = url[beg_index:].index('/') + beg_index
+            drive_id = url[beg_index: end_index]
+
+        # ex. '...drive.google.com/drive/folders/ID?usp=sharing'
+        if url[beg_index:].find('?usp=sharing') > -1:
+            end_index = url[beg_index:].index('?usp=sharing') + beg_index
+            drive_id = url[beg_index: end_index]
+
+        else:
+            drive_id = url[beg_index:]
+
+    # ex. '...drive.google.com/folderview?id=ID&usp=sharing'
+        if url.find('/folderview?id=') > -1:
+            response_id_type = "file"
+            folder_indicator = '/folderview?id=/'
+            beg_index = url.index(folder_indicator) + len(folder_indicator)
+            if url[beg_index:].find('?usp=sharing') > -1:
+                end_index = url[beg_index:].index('?usp=sharing') + beg_index
+                drive_id = url[beg_index: end_index]
+            else:
+                drive_id = url[beg_index:]
+
+    # If file
+    if url.find('/file/') > -1:
+        response_id_type = "file"
+        file_indicator = '/d/'
+        beg_index = url.index(file_indicator) + len(file_indicator)
+
+        if url[beg_index:].find('/') > 1:
+            end_index = url[beg_index:].index('/') + beg_index
+            drive_id = url[beg_index: end_index]
+        else:
+            drive_id = url[beg_index:]
+
+    # If other
+    if url.find('/open?') > -1:
+        response_id_type = "other"
+        indicator = 'id='
+        beg_index = url.find(indicator) + len(indicator)
+        if url[beg_index:].find('/') > -1:
+            end_index = url[beg_index:].index('/') + beg_index
+            drive_id = url[beg_index: end_index]
+        else:
+            drive_id = url[beg_index:]
+    return(drive_id, response_id_type)
+
+'''Given drive ID, download locally to destination path (includes filename).
+    Return table with image info (name, width, height)'''
+def download_drive_file(file_id, destination, image_name):
+    image_info = {}
+    credentials = get_credentials()
+    http = credentials.authorize(httplib2.Http())
+    service = discovery.build('drive', 'v3', http=http)
+
+    print("file_id: " + file_id)
+    request = service.files().get_media(fileId=file_id)
+    fh = io.BytesIO()
+    downloader = MediaIoBaseDownload(fh, request)
+    done = False
+    while done is False:
+        status, done = downloader.next_chunk()
+        print("Download %d%%." % int(status.progress() * 100))
+
+    img_bytestes = downloader._fd
+    image = Image.open(img_bytestes)
+    image.save(destination + "/" + image_name)
+    image_info["name"] = image_name
+    image_info["width"] = image.size[0]
+    image_info["height"] = image.size[1]
+    print("Downloading drive file as " + str(image_info))
+    return image_info
+
+def handle_drive_folder(drive_id, destination, image_id, index, i):
+    print("Handling drive folder")
+    #loop thru images FOR LOOP IN J, get drive_id
+    #handle_drive_file(drive_id, destination, image_id, index, i, j)
+
+''' Handle Drive File '''
+def handle_drive_file(drive_id, destination, image_id, index, i, j):
+    if index+i+j == 0:
+        img_name = image_id + '.jpg'
+    else:
+        img_name = image_id + str(i+index) + "_" + str(j) +'.jpg'
+    try:
+        img_info = download_drive_file(drive_id, destination, img_name)
+    except Exception as err:
+        print("Error downloding drive file " + link_url)
+        img_info = "invalidImage"
+        record_error(link_url, err)
+
+'''Check if dropbox url'''
+def is_dropbox(url):
+    match_obj = re.match(r"https?://www.dropbox.com/", url, re.I)
+    return match_obj != None
+
+'''Given db link, return type'''
+def get_db_type(url):
+    for type in "/s/", "/sh/":
+        print("Trying type " + type)
+        match_obj = re.match(r"https?://www.dropbox.com"+type, url, re.I)
+        print("match_obj: " + str(match_obj))
+        if match_obj != None:
+            break
+    if type == "/s/":
+        db_type = "file"
+    if type == "/sh/":
+        db_type = "folder"
+
+    return db_type
+
+''' Transform dropbox link into downloadable type by changing trailing end to dl=1'''
+def db_downloadable(url):
+    file_extension_index = url.rfind('.')
+    qIndicator = '?'
+    q_index = url[file_extension_index:].find(qIndicator)
+    downloadable = 'dl=1'
+    returnURL = url[:file_extension_index + q_index] + qIndicator + downloadable
+    return returnURL
+
+''' Iterate thru all images in DB Folder and download '''
+def handle_db_folder(url):
+    print("handle db folder")
+
+''' Call on SINGLE image links can be downloaded via urllib:
+    That is, images that are not hosted on Google Drive or Dropbox'''
+def urllib_download(link_url, destination, img_name):
+    print ("calling direct download on " + link_url + " to " + destination + " under " + img_name)
+    img_info = {}
+    
+    try:
+        urllib.request.urlretrieve(link_url, destination + "/" + img_name)
+        im=Image.open(destination+"/"+img_name)
+        img_info["name"] = img_name
+        img_info["width"] = im.size[0]
+        img_info["height"] = im.size[1]
+        print("DOWNLOADED: " + str(img_info))
+    except Exception as err:
+        print(err)
+        print("!!! Error downloading")
+        img_info = 'invalidImage'
+        record_error(link_url, err)
+    return img_info
+
+''' Handle direct image.  Can edit table_result in handle_images, but ultimately returns "img_info" '''
+def direct_download(link_url, destination, id_type, image_id, index, i, table_result):
+    img_info = "invalidImage"
+    client_id = "37dc0b4e676ca0d"
+    headers = {"authorization": "Client-ID " + client_id}
+
+    # Check and fix broken links to non-album non-gallery imgur URLs
+    if is_broken_imgur(link_url):
+        link_url += ".jpg"
+        print("Just fixed link to: " + link_url)
+
+    file_extension_index = link_url.rfind('.')
+    extension = link_url[file_extension_index:]
+
+    if is_img_link(link_url):
+        if index+i == 0:
+            img_name = image_id + extension
+        else:
+            img_name = image_id + "_" + str(index+i) + extension
+        img_info = urllib_download(link_url, destination, img_name)
+
+    if is_imgur_album(link_url):
+        print("*** IMGUR ALBUM ***" + link_url)
+
+        # Check imgur album/gallery
+        album_id = get_imgur_album_id(link_url)
+        url = "https://api.imgur.com/3/album/" + album_id + "/images"
+        response = requests.request("GET", url, headers=headers)
+        image_data = json.loads(response.text)["data"]
+
+        # Download images within album
+        num_images = len(image_data)
+        for j in range(0, num_images):
+            direct_img = image_data[j]["link"]
+            file_extension_index = direct_img.rfind('.')
+            extension = direct_img[file_extension_index:]
+
+            if index+i+j == 0:
+                img_name = image_id + extension
+            else:
+                img_name = image_id + "_" + str(i + index) + "_" + str(j) + extension
+
+            table_result[direct_img] = urllib_download(direct_img, destination, img_name)
+
+    if is_imgur_gallery(link_url):
+        print("*** IMGUR GALLERY ***" + link_url)
+        gall_id = get_imgur_gallery_id(link_url)
+        url = "https://api.imgur.com/3/gallery/album/" + gall_id
+        response = requests.request("GET", url, headers=headers)
+        image_data = json.loads(response.text)["data"]["images"]
+        num_images = len(image_data)
+        print("num_images: " + str(num_images))
+
+        for j in range(0, num_images):
+            direct_img = image_data[j]["link"]
+
+            # Check and fix broken links to non-album imgur URLs
+            if is_broken_imgur(direct_img):
+                direct_img += ".jpg"
+                print("Just fixed link to: " + direct_img)
+
+            # If url ends in jpg or png: download image
+            if is_img_link(direct_img):
+                file_extension_index = direct_img.rfind('.')
+                extension = direct_img[file_extension_index:]
+                print("extension: " + extension)
+
+                if index+i+j == 0:
+                    img_name = image_id + extension
+                else:
+                    img_name = image_id + "_" + str(i+index) + "_" + str(j) + extension
+
+                table_result[direct_img] = urllib_download(direct_img, destination, img_name)
+    # Google Drive Images
+    if is_drive(link_url):
+        print("*** GOOGLE DRIVE ***")
+        id_type = get_drive_id_type(link_url)
+        drive_id = id_type[0]
+        drive_type = id_type[1]
+        print("ID: " + str(drive_id))
+        print("Type: " + str(drive_type))
+        # Folder
+        if drive_type == "folder":
+            print("UNRESOLVED drive folder")
+            handle_drive_folder(drive_id, destination, image_id, index, i)
+
+        # Single File
+        elif drive_type == "file":
+            print("Google drive file")
+            handle_drive_file(drive_id, destination, image_id, index, i, 0)
+            
+        #Unknown other
+        elif drive_type == "other":
+            print("Unknown type")
+            for handle in handle_drive_file, handle_drive_folder:
+                try:
+                    handle(drive_id, destination, image_id, index, i)
+                except Exception as err:
+                    print(err)
+                    print("!!! drive other error")
+                    continue
+
+
+    # Dropbox Images
+    if is_dropbox(link_url):
+        print("*** DROPBOX ***" + link_url)
+        db_type = get_db_type(link_url)
+        if db_type == "folder":
+            print("UNRESOLVED db folder")
+            #handle_db_folder(link_url)
+        if db_type == 'file':
+            # Make dropbox link downloadable by changing ending to dl=1
+            try:
+                link_url = db_downloadable(link_url)
+                file_extension_index = link_url.rfind('.')
+                extension = link_url[file_extension_index:]
+                urllib_download(link_url, destination, img_id + extension)
+            except Exception as err:
+                print(err)
+                print("!!! downloading dropbox error")
+                record_error(link_url, err)
+
+
+    # Download link, return name of downloaded image.
+    # If image could not be downloaded, return "invalidImg"
+    if not is_img_link(link_url) and not is_imgur_album(link_url) and not is_imgur_gallery(link_url) and not is_drive(link_url) and not is_dropbox(link_url):
+        print("not direct/imgur/drive/db")
+        img_info = urllib_download(link_url, destination, image_id+'.jpg')
+        print("saving other link as " + str(img_info))
+        
+    return img_info
+
+
+'''
+ Searches for valid images within content to save to destination
+ id_type = 0: download images for source, passing in HTML as content.  Save as "SOURCE.jpg", "SOURCE_1.jpg", etc
+ id_type = 1: download images for comments, passing in comment object as content.  Save as "<commentID>.jpg", "<commentID>_1.jpg", etc
+ Return dictionary of url:img_infoPath
+'''
+def handle_images(content, destination, id_type, index):
+    print("handling content " + str(content))
+    if id_type == 'SOURCE':
+        image_id = 'SOURCE'
+    if id_type == 'COMMENT':
+        image_id = content.id
+        content = content.body_html
+
+    table_result = {}
+    num_links = content.count("<a href=")
+    #print("Number of links: " + str(num_links))
+
+    # Loop thru all links
+    for i in range(0, num_links):
+        link_indicator = '<a href="'
+        link_index = content.find(link_indicator)
+        new_beginning = link_index + len(link_indicator)
+        url_start = content[new_beginning:]
+        url_end = url_start.find('">')
+        link_url = content[new_beginning:new_beginning+url_end]
+        print("Found link: " + link_url)
+
+        img_info = direct_download(link_url, destination, id_type, image_id, index, i, table_result)
+
+        if img_info != "invalidImage":
+            table_result[link_url] = img_info
+
+        # Move to next link
+        content = content[new_beginning+url_end:]
+        print("\n")
+
+    return table_result
+
+'''Create submission folders, process submission comments, load JSON with relevant data'''
+def process_submission(submission_id):
+    print("======SUBMISSION " + str(submission_id) + "=========")
+    submission = REDDIT.submission(submission_id)
+
+    # Make new folder for submission
+    submission_folder = DB_DIR + '/' + submission_id
+    os.mkdir(submission_folder)
+
+    # Create JSON within folder
+    submission_json = submission_folder + '/raw.json'
+    edit_json = open(submission_json, "w")
+
+    # Populate JSON
+    data = {}
+    data['id'] = submission.id
+    data['title'] = submission.title
+    data['url'] = submission.url
+
+    data['content'] = html.escape(submission.selftext)
+    data['table'] = []
+
+    allImages = {}
+    # Download source images:
+    # Check and fix broken links to non-album non-gallery imgur URLs
+    if is_broken_imgur(submission.url):
+        submission.url += ".jpg"
+        print("Just fixed link to: " + submission.url)
+
+    file_extension_index = submission.url.rfind('.')
+    extension = submission.url[file_extension_index:]
+
+    # Download images from source (submission url). Record url:img if available.
+    print("SOURCE IMAGE")
+    img_info = direct_download(submission.url, submission_folder, 'SOURCE', 'SOURCE', 0, 0, allImages)
+
+
+    if img_info != "invalidImage":
+        allImages[submission.url] = img_info
+    print("\n")
+    print("SOURCE BODY TEXT")
+    
+    #Download images from source (body text)
+    source_body_results = {}
+    # Try/except in case of null source.selfText and return dictionary of url:img relationship
+    try:
+        response = urllib.request.urlopen(submission.url + '.json')
+        print("**Connected via urllibr.open")
+        str_res = response.read().decode("UTF-8")
+        json_res = json.loads(str_res)
+        selftext_html = json_res[0]['data']['children'][0]['data']['selftext_html']
+        print(selftext_html)
+        # Merge results from source.selfText with allImages
+        source_body_results = handle_images(html.unescape(selftext_html), submission_folder, 'SOURCE', len(allImages))
+        allImages.update(source_body_results)
+
+    except Exception as err:
+        if err != "HTTP Error 404: Not Found" and err != "'utf-8' codec can't decode byte 0xff in position 0: invalid start byte" and err != "Expecting valie: line 1 column 1 (char 0)":
+            print(err)
+            print("!!! Source body text error")
+        pass
+
+    print("\n")
+    print("FROM COMMENTS")
+    # Download comment images and return dictionary of url:img relationship
+    comment_results = {}
+    submission.comments.replace_more(limit=0)
+    comment_list = submission.comments.list()
+    for comment in comment_list:
+        # Ignore comments by automoderator & other bots
+        if comment.author == 'AutoModerator' or comment.author == 'imguralbumbot':
+            continue
+        # Merge results from comments
+        singlecomment_results = handle_images(comment, submission_folder, 'COMMENT', 0)
+        comment_results.update(singlecomment_results)
+
+    # Merge results from comments with allImages
+    allImages.update(comment_results)
+
+    # Save JSON table value as allImages
+    data['table'] = allImages
+
+    edit_json.write(json.dumps(data))
+    edit_json.close()
+
+'''Load and process recent k submissions'''
+def load_k_posts(k):
+    subreddit = REDDIT.subreddit('photoshoprequest')
+    submission_list = subreddit.new(limit=k)
+    for submission in submission_list:
+        submission_folder = DB_DIR + '/' + submission.id
+        if os.path.isdir(submission_folder):
+            break
+        process_submission(submission.id)
+
+process_submission('3f5lxb')
+                    
+'''                 
+redditTest = ['6ffv2l', '6fdzfq', '6fd90q', '6fcuvx', '6fcn05']
+for subID in redditTest:
+    process_submission(subID)
+
+load_k_posts(40)
+'''
